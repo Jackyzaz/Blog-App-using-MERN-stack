@@ -23,16 +23,19 @@ const AddBlogs = () => {
     }));
   };
   const sendRequest = async () => {
-    const res = await axios
-      .post(`${config.BASE_URL}/api/blogs/add`, {
+    try {
+      const res = await axios.post(`${config.BASE_URL}/api/blogs/add`, {
         title: inputs.title,
         desc: inputs.description,
         img: inputs.imageURL.trim() === "" ? placeholderImg : inputs.imageURL,
         user: localStorage.getItem("userId"),
-      })
-      .catch((err) => console.log(err));
-    const data = await res.data;
-    return data;
+      });
+
+      return res.data.data;
+    } catch (err) {
+      console.log("Error in sendRequest:", err);
+      throw err;
+    }
   };
   const handleSubmit = (e) => {
     e.preventDefault();

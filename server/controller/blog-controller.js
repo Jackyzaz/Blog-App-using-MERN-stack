@@ -6,10 +6,7 @@ const { ApiError } = require("../utils/ApiError");
 
 const getAllBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find();
-    if (!blogs || blogs.length === 0) {
-      return res.status(404).json(new ApiError(404, "No blogs found"));
-    }
+    const blogs = await Blog.find().populate("user");
     return res.status(200).json(new ApiResponse(200, { blogs }, "Blogs found"));
   } catch (e) {
     return res.status(500).json(new ApiError(500, e.message));
@@ -27,16 +24,14 @@ const addBlog = async (req, res, next) => {
     }
 
     const blog = new Blog({ title, desc, img, user, date: currentDate });
+    await blog.save();
 
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    await blog.save({ session });
     existingUser.blogs.push(blog);
-    await existingUser.save({ session });
-    await session.commitTransaction();
+    await existingUser.save();
 
     return res.status(201).json(new ApiResponse(201, { blog }, "Blog created successfully"));
   } catch (e) {
+    console.log(e);
     return res.status(500).json(new ApiError(500, e.message));
   }
 };
@@ -72,17 +67,20 @@ const getById = async (req, res, next) => {
 const deleteBlog = async (req, res, next) => {
   const id = req.params.id;
   try {
-    const blog = await Blog.findByIdAndDelete(id).populate('user');
+    const blog = await Blog.findByIdAndDelete(id).populate("user");
     if (!blog) {
       return res.status(404).json(new ApiError(404, "Blog not found"));
     }
 
-    const user = blog.user;
-    user.blogs.pull(blog);
-    await user.save();
+    // Ensure user exists and pull the blog from their list
+    if (blog.user && blog.user.blogs) {
+      blog.user.blogs.pull(blog._id);
+      await blog.user.save();
+    }
 
     return res.status(200).json(new ApiResponse(200, null, "Blog deleted successfully"));
   } catch (e) {
+    console.error("Error in deleteBlog:", e);
     return res.status(500).json(new ApiError(500, e.message));
   }
 };

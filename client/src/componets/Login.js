@@ -30,18 +30,22 @@ const Login = () => {
   const sendRequest = async (type = "login") => {
     console.log("inside send req");
     console.log(`${config.BASE_URL}/api/users/${type}`);
-    const res = await axios
-      .post(`${config.BASE_URL}/api/users/${type}`, {
+    try {
+      const res = await axios.post(`${config.BASE_URL}/api/users/${type}`, {
         name: inputs.name,
         email: inputs.email,
         password: inputs.password,
-      })
-      .catch((err) => console.log(err));
+      });
 
-    const data = await res.data;
-    console.log("return");
-    console.log(data);
-    return data;
+      console.log("return", res.data);
+      // Our server returns ApiResponse structure: { statusCode, data: { user }, message, success }
+      // So we return res.data.data which contains { user }
+      return res.data.data;
+    } catch (err) {
+      console.log("Error in sendRequest:", err);
+      // If error occurs, we should probably throw or return something that doesn't break '.then'
+      throw err;
+    }
   };
 
   const handleSubmit = (e) => {

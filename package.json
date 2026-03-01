@@ -1,0 +1,22 @@
+{
+  "name": "blog-app-using-mern-stack",
+  "version": "1.0.0",
+  "description": "Welcome to the Blog App repository! This application is built using the MERN (MongoDB, Express, React, Node.js) stack and comes with various functionalities to manage and share your blogs.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khushi2706/Blog-App-using-MERN-stack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/khushi2706/Blog-App-using-MERN-stack/issues"
+  },
+  "homepage": "https://github.com/khushi2706/Blog-App-using-MERN-stack#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.3"
+  }
+}

@@ -15,23 +15,30 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useStyles } from "./utils";
 import config from "../config";
-const Blogs = ({ title, desc, img, user, isUser, id }) => {
+const Blog = ({ title, desc, img, user, isUser, id, onDelete }) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const handleEdit = () => {
     navigate(`/myBlogs/${id}`);
   };
   const deleteRequest = async () => {
-    const res = await axios
-      .delete(`${config.BASE_URL}/api/blogs/${id}`)
-      .catch((err) => console.log(err));
-    const data = await res.data;
-    return data;
+    try {
+      const res = await axios.delete(`${config.BASE_URL}/api/blogs/${id}`);
+      return res.data.data;
+    } catch (err) {
+      console.log("Error in deleteRequest (Blog):", err);
+      throw err;
+    }
   };
   const handleDelete = () => {
     deleteRequest()
-      .then(() => navigate("/"))
-      .then(() => navigate("/blogs"));
+      .then(() => {
+        if (onDelete) {
+          onDelete(); // refresh list in parent
+        } else {
+          navigate("/blogs");
+        }
+      });
   };
   return (
     <div>
@@ -88,4 +95,5 @@ const Blogs = ({ title, desc, img, user, isUser, id }) => {
   );
 };
 
-export default Blogs;
+export default Blog;
+

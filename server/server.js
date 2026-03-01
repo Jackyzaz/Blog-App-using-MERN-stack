@@ -28,5 +28,6 @@ app.use("/api", (req, res, next) => {
 });
 
 //define port
+const port = 8000;
 
-app.listen(5001, () => console.log("app started at 5001..."));
+app.listen(port, () => console.log(`app started at ${port}...`));
