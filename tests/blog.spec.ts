@@ -36,7 +36,18 @@ test.describe('Login Page', () => {
     });
 
     test('create blog', async ({ page }) => {
+        // random name bytes salt
+        const random_name = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
+        await page.getByRole('tab', { name: 'Add Blog' }).click();
+        await page.locator('input[name="title"]').click();
+        await page.locator('input[name="title"]').fill(random_name);
+        await page.locator('textarea[name="description"]').click();
+        await page.locator('textarea[name="description"]').fill('hello world');
+        await page.locator('input[name="imageURL"]').click();
+        await page.locator('input[name="imageURL"]').fill('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXNAxASqqE9qpik19nMqI0KjC2NwWQQ2IxbA&s');
+        await page.getByRole('button', { name: 'Submit' }).click();
+        await expect(page.getByRole('main')).toContainText(random_name);
     })
 
 
